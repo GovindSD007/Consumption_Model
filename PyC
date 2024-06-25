@@ -1,0 +1,31 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Load historical data from CSV file
+data = pd.read_csv("historical_data.csv")
+
+# Simulate 15-25% loss of aluminium in slag
+data['aluminium_loss'] = np.random.uniform(0.15, 0.25, size=len(data)) * data['aluminium_added']
+      
+# Compute yield of aluminium
+data['aluminium_yield'] = data['aluminium_added'] - data['aluminium_loss']
+
+# Prepare features and target variable
+features = ['temperature', 'slag_analysis', 'melted_steel_weight', 'desired_grade', 'presence_of_Ti', 'presence_of_Si', 'presence_of_Ca']
+X = data[features]
+y = data['aluminium_yield']
+
+# Train a linear regression model to predict aluminium yield
+model = LinearRegression()
+model.fit(X, y)
+
+# Predict yield of aluminium
+predicted_yield = model.predict(X)
+  
+# Evaluate model performance
+rmse = np.sqrt(mean_squared_error(y, predicted_yield))
+
+# Print RMSE
+print(f"Root Mean Squared Error (RMSE): {rmse:.2f}")
